@@ -1,0 +1,1028 @@
+//   import { useEffect, useState } from "react";
+//   import { useParams, useNavigate } from "react-router-dom";
+//   import api from "../api/axios.js";
+//   import { Navigate } from "react-router-dom";
+//   import { useAuth } from "../context/AuthContext.jsx";
+// import { PayPalButtons } from "@paypal/react-paypal-js";
+//   export default function Booking() {
+//     const { carId } = useParams();
+//     const navigate = useNavigate();
+//     const { user } = useAuth();
+//     const [car, setCar] = useState(null);
+//     const [drivers, setDrivers] = useState([]);
+//     const [form, setForm] = useState({
+//       driverId: "", rentStartDate: "", rentEndDate: "",
+//       chargeType: "days", distance: "", ac: "yes"
+//     });
+//     const [confirm, setConfirm] = useState(null);
+
+//     useEffect(() => {
+//       api.get(`/cars/${carId}`).then(({ data }) => setCar(data));
+//       api.get(`/drivers`).then(({ data }) => setDrivers(data));
+//     }, [carId]);
+
+//     if (!user) {
+//     return <Navigate to="/login" />;
+//   }
+
+//     if (!car) return <p>Loading...</p>;
+
+//     const submit = async (e) => {
+//       e.preventDefault();
+//       // Pick the right rate based on AC/non-AC and charge type
+//       const fare = form.chargeType === "km"
+//         ? (form.ac === "yes" ? car.acPrice : car.nonAcPrice)
+//         : (form.ac === "yes" ? car.acPricePerDay : car.nonAcPricePerDay);
+
+//       try {
+//         const { data } = await api.post("/bookings", {
+//           carId, driverId: form.driverId || null,
+//           rentStartDate: form.rentStartDate, rentEndDate: form.rentEndDate,
+//           chargeType: form.chargeType,
+//           distance: form.chargeType === "km" ? Number(form.distance) : null,
+//           fare
+//         });
+//         setConfirm(data);
+//       } catch (err) {
+//         alert(err.response?.data?.message || "Booking failed");
+//       }
+//     };
+
+//     if (confirm) {
+//       return (
+//         <div className="card" style={{ maxWidth: 500, margin: "0 auto" }}>
+//           <h2>✅ Booking Confirmed!</h2>
+//           <p><strong>Car:</strong> {car.name}</p>
+//           <p><strong>From:</strong> {new Date(confirm.rentStartDate).toLocaleDateString()}</p>
+//           <p><strong>To:</strong> {new Date(confirm.rentEndDate).toLocaleDateString()}</p>
+//           <p><strong>Total:</strong> ₹{confirm.totalAmount}</p>
+//           <button className="btn" onClick={() => navigate("/dashboard")}>Go to My Bookings</button>
+//         </div>
+//       );
+//     }
+
+//     return (
+//   <div className="booking-layout">
+
+//     <div className="booking-info-card">
+
+//       <img
+//         src={car.image ? `/uploads/${car.image}` : "/uploads/placeholder.jpg"}
+//         alt={car.name}
+//         className="booking-car-image"
+//       />
+
+//       <div className="booking-car-content">
+
+//         <h2>{car.name}</h2>
+
+//         <p className="booking-plate">
+//           {car.nameplate}
+//         </p>
+
+//         <div className="booking-price-box">
+
+//           <div>
+
+//     <span>
+//       {form.chargeType === "km"
+//         ? "AC / KM"
+//         : "AC / Day"}
+//     </span>
+
+//     <strong>
+//       ₹{
+//         form.chargeType === "km"
+//           ? car.acPrice
+//           : car.acPricePerDay
+//       }
+//     </strong>
+
+//   </div>
+
+//   <div>
+
+//     <span>
+//       {form.chargeType === "km"
+//         ? "Non-AC / KM"
+//         : "Non-AC / Day"}
+//     </span>
+
+//     <strong>
+//       ₹{
+//         form.chargeType === "km"
+//           ? car.nonAcPrice
+//           : car.nonAcPricePerDay
+//       }
+//     </strong>
+
+//   </div>
+
+
+//         </div>
+
+//       </div>
+
+//     </div>
+
+//     <div className="booking-form-card">
+
+//       <h2>
+//         Complete Your Booking
+//       </h2>
+
+//       <form onSubmit={submit} className="modern-booking-form">
+
+//         <label>Pick a Driver</label>
+
+//         <select
+//           value={form.driverId}
+//           onChange={(e) =>
+//             setForm({
+//               ...form,
+//               driverId: e.target.value
+//             })
+//           }
+//         >
+//           <option value="">
+//             Self Drive
+//           </option>
+
+//           {drivers.map((d) => (
+//             <option key={d._id} value={d._id}>
+//               {d.name} ({d.phone})
+//             </option>
+//           ))}
+//         </select>
+
+//         <label>AC Type</label>
+
+//         <select
+//           value={form.ac}
+//           onChange={(e) =>
+//             setForm({
+//               ...form,
+//               ac: e.target.value
+//             })
+//           }
+//         >
+//           <option value="yes">AC</option>
+//           <option value="no">Non-AC</option>
+//         </select>
+
+//         <label>Charge Type</label>
+
+//         <select
+//           value={form.chargeType}
+//           onChange={(e) =>
+//             setForm({
+//               ...form,
+//               chargeType: e.target.value
+//             })
+//           }
+//         >
+//           <option value="days">Per Day</option>
+//           <option value="km">Per KM</option>
+//         </select>
+
+//         {form.chargeType === "km" && (
+//           <input
+//             type="number"
+//             placeholder="Estimated distance (km)"
+//             value={form.distance}
+//             onChange={(e) =>
+//               setForm({
+//                 ...form,
+//                 distance: e.target.value
+//               })
+//             }
+//             required
+//           />
+//         )}
+
+//         <div className="date-grid">
+
+//           <div>
+
+//             <label>Start Date</label>
+
+//             <input
+//               type="date"
+//               min={new Date().toISOString().split("T")[0]}
+//               value={form.rentStartDate}
+//               onChange={(e) =>
+//                 setForm({
+//                   ...form,
+//                   rentStartDate: e.target.value
+//                 })
+//               }
+//               required
+//             />
+
+//           </div>
+
+//           <div>
+
+//             <label>Return Date</label>
+
+//             <input
+//               type="date"
+//               min={
+//                 form.rentStartDate ||
+//                 new Date().toISOString().split("T")[0]
+//               }
+//               value={form.rentEndDate}
+//               onChange={(e) =>
+//                 setForm({
+//                   ...form,
+//                   rentEndDate: e.target.value
+//                 })
+//               }
+//               required
+//             />
+
+//           </div>
+
+//         </div>
+
+//         <button className="booking-submit-btn">
+//           Confirm Booking
+//         </button>
+//         <PayPalButtons
+
+//   style={{
+//     layout: "vertical"
+//   }}
+
+//   createOrder={(data, actions) => {
+
+//     const amount =
+
+//       form.chargeType === "km"
+
+//         ? (
+//             form.ac === "yes"
+//               ? car.acPrice
+//               : car.nonAcPrice
+//           )
+
+//         : (
+//             form.ac === "yes"
+//               ? car.acPricePerDay
+//               : car.nonAcPricePerDay
+//           );
+
+//     return actions.order.create({
+
+//       purchase_units: [
+
+//         {
+//           amount: {
+//             value: String(amount)
+//           }
+//         }
+
+//       ]
+
+//     });
+
+//   }}
+
+//   onApprove={(data, actions) => {
+
+//     return actions.order.capture()
+
+//       .then(async function(details) {
+
+//         alert(
+//           "Payment Successful by " +
+//           details.payer.name.given_name
+//         );
+
+//         submit(new Event("submit"));
+
+//       });
+
+//   }}
+
+// />
+
+//       </form>
+
+//     </div>
+
+//   </div>
+// );
+//   }
+
+import { useEffect, useState } from "react";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
+
+import api from "../api/axios.js";
+
+import { useAuth } from "../context/AuthContext.jsx";
+
+import { PayPalButtons }
+from "@paypal/react-paypal-js";
+
+export default function Booking() {
+
+  const { carId } = useParams();
+
+  const navigate = useNavigate();
+
+  const { user } = useAuth();
+
+  const [car, setCar] = useState(null);
+
+  const [drivers, setDrivers] = useState([]);
+
+  const [paymentMethod, setPaymentMethod] =
+    useState("paypal");
+
+  const [form, setForm] = useState({
+
+    driverId: "",
+
+    rentStartDate: "",
+
+    rentEndDate: "",
+
+    chargeType: "days",
+
+    distance: "",
+
+    ac: "yes"
+
+  });
+
+  const [confirm, setConfirm] = useState(null);
+
+  useEffect(() => {
+
+    api.get(`/cars/${carId}`)
+      .then(({ data }) => setCar(data));
+
+    api.get(`/drivers`)
+      .then(({ data }) => setDrivers(data));
+
+  }, [carId]);
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (!car) {
+    return <p>Loading...</p>;
+  }
+
+  const calculateAmount = () => {
+
+    return form.chargeType === "km"
+
+      ? (
+          form.ac === "yes"
+            ? car.acPrice
+            : car.nonAcPrice
+        )
+
+      : (
+          form.ac === "yes"
+            ? car.acPricePerDay
+            : car.nonAcPricePerDay
+        );
+  };
+
+  const submit = async () => {
+
+    const fare = calculateAmount();
+
+    try {
+
+      const { data } = await api.post("/bookings", {
+
+        carId,
+
+        driverId:
+          form.driverId || null,
+
+        rentStartDate:
+          form.rentStartDate,
+
+        rentEndDate:
+          form.rentEndDate,
+
+        chargeType:
+          form.chargeType,
+
+        distance:
+          form.chargeType === "km"
+            ? Number(form.distance)
+            : null,
+
+        fare
+
+      });
+
+      setConfirm(data);
+
+    } catch (err) {
+
+      alert(
+        err.response?.data?.message
+        || "Booking failed"
+      );
+    }
+  };
+
+  if (confirm) {
+
+    return (
+
+      <div
+        className="card"
+        style={{
+          maxWidth: 500,
+          margin: "0 auto"
+        }}
+      >
+
+        <h2>
+          ✅ Booking Confirmed!
+        </h2>
+
+        <p>
+          <strong>Car:</strong>
+          {car.name}
+        </p>
+
+        <p>
+          <strong>From:</strong>
+
+          {
+            new Date(
+              confirm.rentStartDate
+            ).toLocaleDateString()
+          }
+        </p>
+
+        <p>
+          <strong>To:</strong>
+
+          {
+            new Date(
+              confirm.rentEndDate
+            ).toLocaleDateString()
+          }
+        </p>
+
+        <p>
+          <strong>Total:</strong>
+
+          ₹{confirm.totalAmount}
+        </p>
+
+        <button
+          className="btn"
+          onClick={() =>
+            navigate("/dashboard")
+          }
+        >
+          Go to My Bookings
+        </button>
+
+      </div>
+    );
+  }
+
+  return (
+
+    <div className="booking-layout">
+
+      <div className="booking-info-card">
+
+        <img
+          src={
+            car.image
+              ? `/uploads/${car.image}`
+              : "/uploads/placeholder.jpg"
+          }
+
+          alt={car.name}
+
+          className="booking-car-image"
+        />
+
+        <div className="booking-car-content">
+
+          <h2>{car.name}</h2>
+
+          <p className="booking-plate">
+            {car.nameplate}
+          </p>
+
+          <div className="booking-price-box">
+
+            <div>
+
+              <span>
+                {
+                  form.chargeType === "km"
+                    ? "AC / KM"
+                    : "AC / Day"
+                }
+              </span>
+
+              <strong>
+
+                ₹{
+                  form.chargeType === "km"
+                    ? car.acPrice
+                    : car.acPricePerDay
+                }
+
+              </strong>
+
+            </div>
+
+            <div>
+
+              <span>
+
+                {
+                  form.chargeType === "km"
+                    ? "Non-AC / KM"
+                    : "Non-AC / Day"
+                }
+
+              </span>
+
+              <strong>
+
+                ₹{
+                  form.chargeType === "km"
+                    ? car.nonAcPrice
+                    : car.nonAcPricePerDay
+                }
+
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div className="booking-form-card">
+
+        <h2>
+          Complete Your Booking
+        </h2>
+
+        <form
+          className="modern-booking-form"
+        >
+
+          <label>
+            Pick a Driver
+          </label>
+
+          <select
+
+            value={form.driverId}
+
+            onChange={(e) =>
+
+              setForm({
+
+                ...form,
+
+                driverId:
+                  e.target.value
+
+              })
+
+            }
+
+          >
+
+            <option value="">
+              Self Drive
+            </option>
+
+            {
+              drivers.map((d) => (
+
+                <option
+                  key={d._id}
+                  value={d._id}
+                >
+
+                  {d.name}
+                  ({d.phone})
+
+                </option>
+
+              ))
+            }
+
+          </select>
+
+          <label>
+            AC Type
+          </label>
+
+          <select
+
+            value={form.ac}
+
+            onChange={(e) =>
+
+              setForm({
+
+                ...form,
+
+                ac:
+                  e.target.value
+
+              })
+
+            }
+
+          >
+
+            <option value="yes">
+              AC
+            </option>
+
+            <option value="no">
+              Non-AC
+            </option>
+
+          </select>
+
+          <label>
+            Charge Type
+          </label>
+
+          <select
+
+            value={form.chargeType}
+
+            onChange={(e) =>
+
+              setForm({
+
+                ...form,
+
+                chargeType:
+                  e.target.value
+
+              })
+
+            }
+
+          >
+
+            <option value="days">
+              Per Day
+            </option>
+
+            <option value="km">
+              Per KM
+            </option>
+
+          </select>
+
+          {
+            form.chargeType === "km" && (
+
+              <input
+
+                type="number"
+
+                placeholder="Estimated distance (km)"
+
+                value={form.distance}
+
+                onChange={(e) =>
+
+                  setForm({
+
+                    ...form,
+
+                    distance:
+                      e.target.value
+
+                  })
+
+                }
+
+                required
+
+              />
+
+            )
+          }
+
+          <div className="date-grid">
+
+            <div>
+
+              <label>
+                Start Date
+              </label>
+
+              <input
+
+                type="date"
+
+                min={
+                  new Date()
+                  .toISOString()
+                  .split("T")[0]
+                }
+
+                value={form.rentStartDate}
+
+                onChange={(e) =>
+
+                  setForm({
+
+                    ...form,
+
+                    rentStartDate:
+                      e.target.value
+
+                  })
+
+                }
+
+                required
+
+              />
+
+            </div>
+
+            <div>
+
+              <label>
+                Return Date
+              </label>
+
+              <input
+
+                type="date"
+
+                min={
+                  form.rentStartDate ||
+
+                  new Date()
+                    .toISOString()
+                    .split("T")[0]
+                }
+
+                value={form.rentEndDate}
+
+                onChange={(e) =>
+
+                  setForm({
+
+                    ...form,
+
+                    rentEndDate:
+                      e.target.value
+
+                  })
+
+                }
+
+                required
+
+              />
+
+            </div>
+
+          </div>
+
+          <label>
+            Payment Method
+          </label>
+
+          <select
+
+            value={paymentMethod}
+
+            onChange={(e) =>
+
+              setPaymentMethod(
+                e.target.value
+              )
+
+            }
+
+          >
+
+            <option value="paypal">
+              PayPal
+            </option>
+
+            <option value="card">
+              Credit / Debit Card
+            </option>
+
+            <option value="upi">
+              UPI QR
+            </option>
+
+          </select>
+
+          {
+            paymentMethod === "paypal" && (
+
+              <div className="payment-box">
+
+                <h3>
+                  Pay with PayPal
+                </h3>
+
+                <PayPalButtons
+
+                  style={{
+                    layout: "vertical",
+                    shape: "rect"
+                  }}
+
+                  createOrder={(data, actions) => {
+
+                    return actions.order.create({
+
+                      purchase_units: [
+
+                        {
+                          amount: {
+                            value: String(
+                              calculateAmount()
+                            )
+                          }
+                        }
+
+                      ]
+
+                    });
+
+                  }}
+
+                  onApprove={(data, actions) => {
+
+                    return actions
+                      .order
+                      .capture()
+
+                      .then(async function(details) {
+
+                        alert(
+                          "Payment Successful by " +
+                          details.payer.name.given_name
+                        );
+
+                        submit();
+
+                      });
+
+                  }}
+
+                />
+
+              </div>
+            )
+          }
+
+          {
+            paymentMethod === "card" && (
+
+              <div className="payment-box">
+
+                <h3>
+                  Credit / Debit Card
+                </h3>
+
+                <input
+                  placeholder="Card Number"
+                  defaultValue="4111111111111111"
+                />
+
+                <input
+                  placeholder="Card Holder Name"
+                  defaultValue="Vivek More"
+                />
+
+                <input
+                  placeholder="Expiry"
+                  defaultValue="12/30"
+                />
+
+                <input
+                  placeholder="CVV"
+                  defaultValue="123"
+                />
+
+                <button
+
+                  type="button"
+
+                  className="booking-submit-btn"
+
+                  onClick={() => {
+
+                    alert(
+                      "Card Payment Successful"
+                    );
+
+                    submit();
+
+                  }}
+
+                >
+
+                  Pay Now
+
+                </button>
+
+                <small>
+                  Test Card Mode Enabled
+                </small>
+
+              </div>
+            )
+          }
+
+          {
+            paymentMethod === "upi" && (
+
+              <div className="payment-box">
+
+                <h3>
+                  Scan QR & Pay
+                </h3>
+
+                <img
+
+                  src="/upi-qr.png"
+
+                  alt="UPI QR"
+
+                  style={{
+                    width: "250px",
+                    display: "block",
+                    margin: "20px auto"
+                  }}
+
+                />
+
+                <p
+                  style={{
+                    textAlign: "center"
+                  }}
+                >
+
+                  UPI ID:
+                  carrental@upi
+
+                </p>
+
+                <button
+
+                  type="button"
+
+                  className="booking-submit-btn"
+
+                  onClick={() => {
+
+                    alert(
+                      "UPI Payment Successful"
+                    );
+
+                    submit();
+
+                  }}
+
+                >
+
+                  I Have Paid
+
+                </button>
+
+              </div>
+            )
+          }
+
+        </form>
+
+      </div>
+
+    </div>
+  );
+}
