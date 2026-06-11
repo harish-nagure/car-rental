@@ -312,7 +312,7 @@ exports.create = async (
         // PAYMENT DETAILS
 
         currency:
-          currency || "INR",
+          currency || "USD",
 
         paymentMethod:
           paymentMethod || "cash",

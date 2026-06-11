@@ -9,7 +9,7 @@ import {
 import api from "../api/axios.js";
 
 import { useAuth }
-from "../context/AuthContext.jsx";
+  from "../context/AuthContext.jsx";
 
 import {
   PayPalButtons
@@ -266,7 +266,7 @@ export default function Booking() {
           amount:
             calculateAmount(),
 
-          currency: "INR",
+          currency: "USD",
 
           paymentMethod,
 
@@ -315,15 +315,15 @@ export default function Booking() {
               form.chargeType === "km"
 
                 ? Number(
-                    form.distance
-                  )
+                  form.distance
+                )
 
                 : null,
 
             fare:
               calculateAmount(),
 
-            currency: "INR",
+            currency: "USD",
 
             paymentMethod,
 
@@ -458,7 +458,7 @@ export default function Booking() {
             Total:
           </strong>
 
-          ₹{confirm.totalAmount}
+          ${confirm.totalAmount.toFixed(2)}
 
         </p>
 
@@ -471,7 +471,7 @@ export default function Booking() {
           {
 
             paymentMethod ===
-            "paypal"
+              "paypal"
 
               ? "Paid Online"
 
@@ -552,7 +552,7 @@ export default function Booking() {
                 {
 
                   form.chargeType ===
-                  "km"
+                    "km"
 
                     ? "AC / KM"
 
@@ -567,7 +567,7 @@ export default function Booking() {
                 ₹{
 
                   form.chargeType ===
-                  "km"
+                    "km"
 
                     ? car.acPrice
 
@@ -586,7 +586,7 @@ export default function Booking() {
                 {
 
                   form.chargeType ===
-                  "km"
+                    "km"
 
                     ? "Non-AC / KM"
 
@@ -601,7 +601,7 @@ export default function Booking() {
                 ₹{
 
                   form.chargeType ===
-                  "km"
+                    "km"
 
                     ? car.nonAcPrice
 
@@ -972,55 +972,55 @@ export default function Booking() {
                     {
 
                       form.chargeType ===
-                      "km"
+                        "km"
 
-                      ? (
+                        ? (
 
-                        <>
-                          ₹
+                          <>
+                            ₹
 
-                          {
+                            {
 
-                            form.ac === "yes"
+                              form.ac === "yes"
 
-                              ? car.acPrice
+                                ? car.acPrice
 
-                              : car.nonAcPrice
+                                : car.nonAcPrice
 
-                          }
+                            }
 
-                          {" "}×{" "}
+                            {" "}×{" "}
 
-                          {form.distance || 0}
+                            {form.distance || 0}
 
-                          km
-                        </>
+                            km
+                          </>
 
-                      )
+                        )
 
-                      : (
+                        : (
 
-                        <>
-                          ₹
+                          <>
+                            ₹
 
-                          {
+                            {
 
-                            form.ac === "yes"
+                              form.ac === "yes"
 
-                              ? car.acPricePerDay
+                                ? car.acPricePerDay
 
-                              : car.nonAcPricePerDay
+                                : car.nonAcPricePerDay
 
-                          }
+                            }
 
-                          {" "}×{" "}
+                            {" "}×{" "}
 
-                          {calculateDays()}
+                            {calculateDays()}
 
-                          day(s)
-                        </>
+                            day(s)
+                          </>
 
-                      )
+                        )
 
                     }
 
@@ -1064,149 +1064,239 @@ export default function Booking() {
                     calculateAmount()
                   ]}
 
-                  createOrder={(
-                    data,
-                    actions
-                  ) => {
+                  // createOrder={(
+                  //   data,
+                  //   actions
+                  // ) => {
+
+                  //   console.log(
+                  //     "CREATING ORDER"
+                  //   );
+
+                  //   return actions
+                  //     .order
+                  //     .create({
+
+                  //       purchase_units: [
+
+                  //         {
+
+                  //           description:
+                  //             `${car.name} Booking`,
+
+                  //           amount: {
+
+
+
+                  //             value:
+                  //               calculateAmount()
+
+                  //           }
+
+                  //         }
+
+                  //       ]
+
+                  //     });
+
+                  // }}
+
+                  // onApprove={async (
+                  //   data,
+                  //   actions
+                  // ) => {
+
+                  //   try {
+
+                  //     console.log(
+                  //       "PAYMENT APPROVED"
+                  //     );
+
+                  //     if (
+                  //       !actions.order
+                  //     ) {
+
+                  //       alert(
+                  //         "Order not found"
+                  //       );
+
+                  //       return;
+
+                  //     }
+
+                  //     console.log("Capturing Order ID:", data.orderID);
+
+
+                  //     alert("Capturing order...");
+                  //     const details =
+
+                  //       await actions
+                  //         .order
+                  //         .capture();
+
+                  //     console.log(
+                  //       "PAYMENT SUCCESS:",
+                  //       details
+                  //     );
+
+                  //     setPaymentSuccess(
+                  //       true
+                  //     );
+
+                  //     await submit(
+
+                  //       "paid",
+
+                  //       details.id,
+
+                  //       {
+
+                  //         email:
+
+                  //           details?.payer
+                  //             ?.email_address ||
+
+                  //           null,
+
+                  //         name:
+
+                  //           `${details?.payer
+                  //             ?.name
+                  //             ?.given_name || ""
+
+                  //           } ${details?.payer
+                  //             ?.name
+                  //             ?.surname || ""
+
+                  //           }`,
+
+                  //         phone:
+
+                  //           details?.payer
+                  //             ?.phone
+                  //             ?.phone_number
+                  //             ?.national_number ||
+
+                  //           "Not Provided"
+
+                  //       }
+
+                  //     );
+
+                  //   }
+
+                  //   catch (err) {
+
+                  //     console.error(
+                  //       "PAYMENT ERROR:"
+                  //     );
+
+                  //     console.error(
+                  //       err
+                  //     );
+
+                  //     console.error(
+
+                  //       JSON.stringify(
+                  //         err,
+                  //         null,
+                  //         2
+                  //       )
+
+                  //     );
+
+                  //     alert(
+                  //       "Payment failed"
+                  //     );
+
+                  //   }
+
+                  // }}
+
+                  createOrder={(data, actions) => {
+                    const amount = Number(
+                      calculateAmount()
+                    ).toFixed(2);
 
                     console.log(
-                      "CREATING ORDER"
+                      "CREATING ORDER:",
+                      amount
                     );
 
-                    return actions
-                      .order
-                      .create({
-
-                        purchase_units: [
-
-                          {
-
-                            description:
-                              `${car.name} Booking`,
-
-                            amount: {
-
-                              
-
-                              value:
-                                calculateAmount()
-
-                            }
-
-                          }
-
-                        ]
-
-                      });
-
+                    return actions.order.create({
+                      intent: "CAPTURE",
+                      purchase_units: [
+                        {
+                          description: `${car.name} Booking`,
+                          amount: {
+                            currency_code: "USD",
+                            value: amount,
+                          },
+                        },
+                      ],
+                    });
                   }}
 
-                  onApprove={async (
-                    data,
-                    actions
-                  ) => {
-
+                  onApprove={async (data, actions) => {
                     try {
+                      console.log("PAYMENT APPROVED");
 
-                      console.log(
-                        "PAYMENT APPROVED"
-                      );
-
-                      if (
-                        !actions.order
-                      ) {
-
-                        alert(
-                          "Order not found"
-                        );
-
+                      if (!actions?.order) {
+                        alert("Order not found");
                         return;
-
                       }
 
-                      const details =
+                      console.log("Capturing Order ID:", data.orderID);
 
-                        await actions
-                          .order
-                          .capture();
+                      const details = await actions.order.capture();
 
-                      console.log(
-                        "PAYMENT SUCCESS:",
-                        details
-                      );
+                      console.log("PAYMENT SUCCESS");
+                      console.log(details);
 
-                      setPaymentSuccess(
-                        true
-                      );
+                      if (details.status !== "COMPLETED") {
+                        throw new Error(
+                          `Payment status: ${details.status}`
+                        );
+                      }
+
+                      setPaymentSuccess(true);
 
                       await submit(
-
                         "paid",
-
                         details.id,
-
                         {
-
                           email:
-
-                            details?.payer
-                              ?.email_address ||
-
-                            null,
+                            details?.payer?.email_address || null,
 
                           name:
-
-                            `${details?.payer
-                              ?.name
-                              ?.given_name || ""
-
-                            } ${details?.payer
-                              ?.name
-                              ?.surname || ""
-
-                            }`,
+                            `${details?.payer?.name?.given_name || ""}
+           ${details?.payer?.name?.surname || ""}`,
 
                           phone:
-
-                            details?.payer
-                              ?.phone
+                            details?.payer?.phone
                               ?.phone_number
                               ?.national_number ||
-
-                            "Not Provided"
-
+                            "Not Provided",
                         }
-
-                      );
-
-                    }
-
-                    catch (err) {
-
-                      console.error(
-                        "PAYMENT ERROR:"
-                      );
-
-                      console.error(
-                        err
-                      );
-
-                      console.error(
-
-                        JSON.stringify(
-                          err,
-                          null,
-                          2
-                        )
-
                       );
 
                       alert(
-                        "Payment failed"
+                        "Payment successful"
                       );
 
-                    }
+                    } catch (err) {
+                      console.error("PAYMENT ERROR");
+                      console.error(err);
 
+                      if (err?.details) {
+                        console.table(err.details);
+                      }
+
+                      alert(
+                        err?.message ||
+                        "Payment failed"
+                      );
+                    }
                   }}
 
                   onCancel={(data) => {
@@ -1283,7 +1373,7 @@ export default function Booking() {
 
                 </p>
 
- <div
+                <div
                   className="payment-total"
                 >
 
@@ -1302,55 +1392,55 @@ export default function Booking() {
                     {
 
                       form.chargeType ===
-                      "km"
+                        "km"
 
-                      ? (
+                        ? (
 
-                        <>
-                          ₹
+                          <>
+                            ₹
 
-                          {
+                            {
 
-                            form.ac === "yes"
+                              form.ac === "yes"
 
-                              ? car.acPrice
+                                ? car.acPrice
 
-                              : car.nonAcPrice
+                                : car.nonAcPrice
 
-                          }
+                            }
 
-                          {" "}×{" "}
+                            {" "}×{" "}
 
-                          {form.distance || 0}
+                            {form.distance || 0}
 
-                          km
-                        </>
+                            km
+                          </>
 
-                      )
+                        )
 
-                      : (
+                        : (
 
-                        <>
-                          ₹
+                          <>
+                            ₹
 
-                          {
+                            {
 
-                            form.ac === "yes"
+                              form.ac === "yes"
 
-                              ? car.acPricePerDay
+                                ? car.acPricePerDay
 
-                              : car.nonAcPricePerDay
+                                : car.nonAcPricePerDay
 
-                          }
+                            }
 
-                          {" "}×{" "}
+                            {" "}×{" "}
 
-                          {calculateDays()}
+                            {calculateDays()}
 
-                          day(s)
-                        </>
+                            day(s)
+                          </>
 
-                      )
+                        )
 
                     }
 

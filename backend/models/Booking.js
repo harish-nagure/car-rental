@@ -33,7 +33,7 @@ transactionId: {
 
 currency: {
   type: String,
-  default: "INR"
+  default: "USD"
 },
 
 payerEmail: {

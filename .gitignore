@@ -44,11 +44,7 @@ Thumbs.db
 .vscode/
 .idea/
 
-# =========================
-# Uploads (optional)
-# keep if backend stores images/files
-# =========================
-backend/uploads/
+
 
 # =========================
 # Coverage
