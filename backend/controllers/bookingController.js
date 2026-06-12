@@ -508,51 +508,52 @@ async (req, res, next) => {
   }
 
 };
-exports.receiveCash =
-async (req, res, next) => {
+// exports.receiveCash =
+// async (req, res, next) => {
 
-  try {
+//   try {
 
-    const booking =
-    await Booking.findById(
-      req.params.id
-    );
+//     const booking =
+//     await Booking.findById(
+//       req.params.id
+//     ).populate("car")
+//       .populate("driver");;
 
-    if (!booking) {
+//     if (!booking) {
 
-      return res.status(404)
-      .json({
+//       return res.status(404)
+//       .json({
 
-        message:
-        "Booking not found"
+//         message:
+//         "Booking not found"
 
-      });
+//       });
 
-    }
+//     }
 
-    booking.paymentStatus =
-    "paid";
+//     booking.paymentStatus =
+//     "paid";
 
-    await booking.save();
+//     await booking.save();
 
-    res.json({
+//     res.json({
 
-      message:
-      "Cash received successfully",
+//       message:
+//       "Cash received successfully",
 
-      booking
+//       booking
 
-    });
+//     });
 
-  }
+//   }
 
-  catch (err) {
+//   catch (err) {
 
-    next(err);
+//     next(err);
 
-  }
+//   }
 
-};
+// };
 
 
 exports.cancelBooking =

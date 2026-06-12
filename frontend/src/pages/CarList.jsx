@@ -7,6 +7,7 @@ import {
 import api from "../api/axios.js";
 
 // Helper to resolve car image
+console.log("api:", api," fd ", `${api}/uploads`);
 const imgUrl = (img) =>
 
   img && img !== "NA"

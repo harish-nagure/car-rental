@@ -68,7 +68,7 @@ export default function Login() {
 
       else {
 
-        navigate("/dashboard");
+        navigate("/");
 
       }
 

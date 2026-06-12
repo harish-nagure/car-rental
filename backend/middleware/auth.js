@@ -12,6 +12,7 @@ const protect = (role = null) => (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // { id, username, role }
 
+    console.log(`Authenticated user: ${decoded.username} (${decoded.role})`);
     if (role && decoded.role !== role) {
       return res.status(403).json({ message: "Forbidden — wrong role" });
     }

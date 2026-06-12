@@ -31,7 +31,63 @@ export default function AdminDashboard() {
     setBookings(b.data);
     setFeedbacks(f.data);
 
+    console.log("Feedbacks:", f.data);
+
   };
+
+  // const receiveCash =
+  // async (bookingId) => {
+
+  //   try {
+
+  //     await api.put(
+
+  //       `/bookings/${bookingId}/receive-cash`
+
+  //     );
+
+  //     loadAll();
+
+  //   }
+
+  //   catch (err) {
+
+  //     console.log(err);
+
+  //   }
+
+  // };
+
+  const receiveCash =
+async (bookingId) => {
+
+  console.log(
+    "TOKEN:",
+    localStorage.getItem("token")
+  );
+
+  try {
+
+    const res =
+      await api.put(
+        `/bookings/${bookingId}/receive-cash`
+      );
+
+    console.log(res.data);
+
+    loadAll();
+
+  }
+
+  catch (err) {
+
+    console.log(
+      err.response?.data
+    );
+
+  }
+
+};
 
   useEffect(() => { loadAll(); }, []);
 
@@ -87,6 +143,7 @@ async (id) => {
         <button className="btn btn-secondary" onClick={() => setTab("cars")}>Cars ({cars.length})</button>{" "}
         <button className="btn btn-secondary" onClick={() => setTab("drivers")}>Drivers ({drivers.length})</button>{" "}
         <button className="btn btn-secondary" onClick={() => setTab("bookings")}>Bookings ({bookings.length})</button>
+
         {" "}
         <button
           className="btn btn-secondary"
@@ -878,7 +935,7 @@ async (id) => {
 
       {tab === "bookings" && (
         <table className="table">
-          <thead><tr><th>Customer</th><th>Car</th><th>Start</th><th>End</th><th>Total</th>
+          <thead><tr><th>Customer</th><th>Car</th><th>Start</th><th>End</th><th>Total</th><th>Driver Name</th>
             <th>Payment</th>
             <th>Status</th><th>Action</th></tr></thead>
           <tbody>
@@ -889,6 +946,7 @@ async (id) => {
                 <td>{new Date(b.rentStartDate).toLocaleDateString()}</td>
                 <td>{new Date(b.rentEndDate).toLocaleDateString()}</td>
                 <td>₹{b.totalAmount}</td>
+                <td>{b.driver?.name || "Self drive" }</td>
                 <td>
 
 
@@ -934,7 +992,9 @@ async (id) => {
                         : "Active Booking"
                     }
                   </span>
+                  
                 </td>
+
 
                 {/* <td>
                   {b.returnStatus !== "returned" && (
@@ -943,11 +1003,10 @@ async (id) => {
                 </td> */}
 
 
-<td>
+{/* <td>
 
   <div className="booking-action-group">
 
-    {/* MARK RETURNED */}
 
     {
 
@@ -983,7 +1042,6 @@ async (id) => {
 
     }
 
-    {/* CANCEL BOOKING */}
 
     {
 
@@ -1021,6 +1079,50 @@ async (id) => {
 
   </div>
 
+
+</td> */}
+
+<td>
+  <div className="booking-action-group">
+
+    {/* MARK RETURNED */}
+    {b.returnStatus !== "returned" &&
+      b.returnStatus !== "cancelled" &&
+      b.paymentStatus === "paid" && (
+        <button
+          className="booking-return-btn"
+          onClick={() => markReturned(b._id)}
+        >
+          Mark Returned
+        </button>
+      )}
+
+    {/* CANCEL BOOKING */}
+    {b.returnStatus !== "returned" &&
+      b.returnStatus !== "cancelled" &&
+      b.paymentStatus === "pending" && (
+        <button
+          className="booking-cancel-btn"
+          onClick={() => cancelBooking(b._id)}
+        >
+          Cancel Booking
+        </button>
+      )}
+
+    {/* RECEIVE CASH */}
+    {b.returnStatus !== "returned" &&
+      b.returnStatus !== "cancelled" &&
+      b.paymentStatus === "pending" &&
+      b.paymentMethod === "cash" && (
+        <button
+          className="driver-cash-btn"
+          onClick={() => receiveCash(b._id)}
+        >
+          Receive Cash
+        </button>
+      )}
+
+  </div>
 </td>
               </tr>
             ))}
@@ -1047,6 +1149,7 @@ async (id) => {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Message</th>
+                  <th>Driver Name</th>
                 </tr>
               </thead>
 
@@ -1057,6 +1160,7 @@ async (id) => {
                     <td>{f.name}</td>
                     <td>{f.email}</td>
                     <td>{f.message}</td>
+                    <td>{f.driver?.name || "N/A"}</td>
                   </tr>
                 ))}
 

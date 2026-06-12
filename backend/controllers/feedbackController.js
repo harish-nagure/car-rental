@@ -16,11 +16,17 @@ exports.create = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
+
 exports.list = async (req, res, next) => {
   try {
-    const items = await Feedback.find().sort({ createdAt: -1 });
+    const items = await Feedback.find()
+      .populate("driver", "name")
+      .sort({ createdAt: -1 });
+
     res.json(items);
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.driverFeedback =
@@ -40,7 +46,7 @@ async (req, res, next) => {
         req.user.id
       )
 
-    })
+    }).populate("driver", "name")
 
     .sort({
       createdAt: -1

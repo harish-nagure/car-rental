@@ -58,6 +58,28 @@ export default function Booking() {
 
     });
 
+  const isBookingValid = () => {
+    if (!form.rentStartDate || !form.rentEndDate) {
+     
+      return false;
+    }
+
+    if (
+      form.chargeType === "km" &&
+      (!form.distance || Number(form.distance) <= 0)
+    ) {
+      return false;
+    }
+
+    if (
+      new Date(form.rentEndDate) <
+      new Date(form.rentStartDate)
+    ) {
+      return false;
+    }
+
+    return true;
+  };
   const [confirm,
     setConfirm] =
     useState(null);
@@ -396,113 +418,206 @@ export default function Booking() {
   // CONFIRMATION PAGE
   if (confirm) {
 
+    // return (
+
+    //   <div
+    //     className="card"
+    //     style={{
+    //       maxWidth: 500,
+    //       margin: "0 auto"
+    //     }}
+    //   >
+
+    //     <h2>
+    //       ✅ Booking Confirmed!
+    //     </h2>
+
+    //     <p>
+
+    //       <strong>
+    //         Car:
+    //       </strong>
+
+    //       {car.name}
+
+    //     </p>
+
+    //     <p>
+
+    //       <strong>
+    //         From:
+    //       </strong>
+
+    //       {
+
+    //         new Date(
+    //           confirm.rentStartDate
+    //         ).toLocaleDateString()
+
+    //       }
+
+    //     </p>
+
+    //     <p>
+
+    //       <strong>
+    //         To:
+    //       </strong>
+
+    //       {
+
+    //         new Date(
+    //           confirm.rentEndDate
+    //         ).toLocaleDateString()
+
+    //       }
+
+    //     </p>
+
+    //     <p>
+
+    //       <strong>
+    //         Total:
+    //       </strong>
+
+    //       ${confirm.totalAmount.toFixed(2)}
+
+    //     </p>
+
+    //     <p>
+
+    //       <strong>
+    //         Payment:
+    //       </strong>
+
+    //       {
+
+    //         paymentMethod ===
+    //           "paypal"
+
+    //           ? "Paid Online"
+
+    //           : "Cash Payment"
+
+    //       }
+
+    //     </p>
+
+    //     <button
+
+    //       className="btn"
+
+    //       onClick={() =>
+
+    //         navigate(
+    //           "/dashboard"
+    //         )
+
+    //       }
+
+    //     >
+
+    //       Go to My Bookings
+
+    //     </button>
+
+    //   </div>
+
+    // );
+
     return (
+  <div className="success-page">
 
-      <div
-        className="card"
-        style={{
-          maxWidth: 500,
-          margin: "0 auto"
-        }}
-      >
+    <div className="success-header">
 
-        <h2>
-          ✅ Booking Confirmed!
-        </h2>
+      <div className="success-circle">
+        ✓
+      </div>
 
-        <p>
+      <h1>Booking Confirmed</h1>
 
-          <strong>
-            Car:
-          </strong>
+      <p>
+        Your vehicle has been reserved successfully.
+      </p>
 
-          {car.name}
+    </div>
 
-        </p>
+    <div className="success-car-card">
 
-        <p>
+      <img
+        src={
+          car.image
+            ? `https://car-rental-xays.onrender.com/uploads/${car.image}`
+            : "/uploads/placeholder.jpg"
+        }
+        alt={car.name}
+      />
 
-          <strong>
-            From:
-          </strong>
+      <div>
 
-          {
+        <h2>{car.name}</h2>
 
-            new Date(
-              confirm.rentStartDate
-            ).toLocaleDateString()
-
-          }
-
-        </p>
-
-        <p>
-
-          <strong>
-            To:
-          </strong>
-
-          {
-
-            new Date(
-              confirm.rentEndDate
-            ).toLocaleDateString()
-
-          }
-
-        </p>
-
-        <p>
-
-          <strong>
-            Total:
-          </strong>
-
-          ${confirm.totalAmount.toFixed(2)}
-
-        </p>
-
-        <p>
-
-          <strong>
-            Payment:
-          </strong>
-
-          {
-
-            paymentMethod ===
-              "paypal"
-
-              ? "Paid Online"
-
-              : "Cash Payment"
-
-          }
-
-        </p>
-
-        <button
-
-          className="btn"
-
-          onClick={() =>
-
-            navigate(
-              "/dashboard"
-            )
-
-          }
-
-        >
-
-          Go to My Bookings
-
-        </button>
+        <span>
+          {car.nameplate}
+        </span>
 
       </div>
 
-    );
+    </div>
 
+    <div className="success-summary">
+
+      <div className="summary-row">
+        <span>Pickup Date</span>
+        <strong>
+          {new Date(
+            confirm.rentStartDate
+          ).toLocaleDateString()}
+        </strong>
+      </div>
+
+      <div className="summary-row">
+        <span>Return Date</span>
+        <strong>
+          {new Date(
+            confirm.rentEndDate
+          ).toLocaleDateString()}
+        </strong>
+      </div>
+
+      <div className="summary-row">
+        <span>Payment</span>
+
+        <strong className="success-paid">
+          {
+            paymentMethod === "paypal"
+              ? "Paid Online"
+              : "Cash Payment"
+          }
+        </strong>
+      </div>
+
+      <div className="summary-row total-row">
+        <span>Total Amount</span>
+
+        <strong>
+          ₹{confirm.totalAmount.toFixed(2)}
+        </strong>
+      </div>
+
+    </div>
+
+    <button
+      className="success-btn"
+      onClick={() =>
+        navigate("/dashboard")
+      }
+    >
+      View My Bookings
+    </button>
+
+  </div>
+);
   }
 
   return (
@@ -1042,6 +1157,7 @@ export default function Booking() {
 
                 <PayPalButtons
 
+                  disabled={!isBookingValid()}
                   style={{
 
                     layout:
@@ -1222,6 +1338,14 @@ export default function Booking() {
                       "CREATING ORDER:",
                       amount
                     );
+
+                   if (!isBookingValid()) {
+  alert(
+    "Please complete all booking details before payment."
+  );
+  throw new Error("Invalid booking details");
+}
+
 
                     return actions.order.create({
                       intent: "CAPTURE",

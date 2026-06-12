@@ -38,7 +38,7 @@ router.put(
 
   "/:id/receive-cash",
 
-  protect("driver"),
+  protect("admin", "customer","driver"),
 
   c.receiveCash
 
