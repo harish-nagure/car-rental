@@ -6,9 +6,13 @@ export default defineConfig({
   server: {
     port: 5173,
     // Proxy /api and /uploads to the Express backend so the frontend can use relative URLs
-    proxy: {
-      "/api":     "http://localhost:5000",
-      "/uploads": "http://localhost:5000"
+    // proxy: {
+    //   "/api":     "http://localhost:5000",
+    //   "/uploads": "http://localhost:5000"
+    // }
+     proxy: {
+      "/api":     "https://car-rental-xays.onrender.com",
+      "/uploads": "https://car-rental-xays.onrender.com"
     }
   }
 });

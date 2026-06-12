@@ -7,14 +7,18 @@ import {
 import api from "../api/axios.js";
 
 // Helper to resolve car image
-console.log("api:", api," fd ", `${api}/uploads`);
+console.log("api:", api," fd ",);
 const imgUrl = (img) =>
-
+  
   img && img !== "NA"
 
-    ? `/uploads/${img}`
+    // ? `/uploads/${img}`
+    // ? `/uploads/${img}`
+    ? `https://car-rental-xays.onrender.com/uploads/${img}`
 
     : "/uploads/placeholder.jpg";
+    
+
 
 export default function CarList() {
 
